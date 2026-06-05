@@ -1,6 +1,6 @@
 ---
 name: enterprise-analysis
-description: AI产业链企业六维安全分析（企业介绍/核心人物/技术知识产权/经济数据/供应链/竞争格局）。输出MD+PDF+DOCX三种格式，含图片嵌入。
+description: AI产业链企业六维分析（企业介绍/核心人物/技术知识产权/经济数据/供应链/竞争格局）。输出MD+PDF+DOCX三种格式，含图片嵌入。
 ---
 
 # 企业分析 · AI产业链企业分析

@@ -210,14 +210,16 @@ def fetch_founder_nvidia_strategy(output_dir):
 
 def fetch_founder(name, domain, output_dir):
     log("===== 创始人照片 =====", "STEP")
-    domain_lower = domain.lower()
-    if "nvidia" in domain_lower:
-        result = fetch_founder_nvidia_strategy(output_dir)
-        if result:
-            return result
+    # ① 百度百科（最高优先级）
     result = fetch_founder_from_baidu(name, output_dir)
     if result:
         return result
+    # ② 特定域名策略（大厂已知图片路径）
+    if "nvidia" in domain.lower():
+        result = fetch_founder_nvidia_strategy(output_dir)
+        if result:
+            return result
+    # ③ 官网about/team页面
     result = fetch_founder_from_website(domain, output_dir)
     if result:
         return result

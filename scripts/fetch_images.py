@@ -61,6 +61,17 @@ def download(url, output_dir, name, must_be_image=True):
             m = re.search(r"\.(jpg|jpeg|png|gif|webp|svg|ico)(?:\?|$)", url, re.I)
             ext = m.group(1).lower() if m else "png"
         fname = f"{name}.{ext}"
+
+        # 灰度JPEG(mode L) → RGB 转换（weasyprint不兼容单通道JPEG）
+        if ext in ("jpg", "jpeg"):
+            img = Image.open(BytesIO(data))
+            if img.mode == "L":
+                rgb = img.convert("RGB")
+                buf = BytesIO()
+                rgb.save(buf, "JPEG", quality=95)
+                data = buf.getvalue()
+                log(f"灰度JPEG转RGB: {name}.{ext}", "FIX")
+
         path = os.path.join(output_dir, fname)
         with open(path, "wb") as f:
             f.write(data)

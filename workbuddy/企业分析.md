@@ -190,32 +190,49 @@
 
 ### Step 2 — 图片抓取（强制执行，无图不交付）
 
-**图片是报告的必需组成部分，严禁跳过。** 三张图缺一不可，按优先级依次尝试，全部失败才标注"图片待补充"。
+**图片是报告的必需组成部分，严禁跳过。** 三张图缺一不可。
 
-**Logo 抓取（按优先级依次尝试，找到即停）：**
+首选用配套脚本全自动抓取：
+
+```bash
+python3 scripts/fetch_images.py \
+  --company "$公司名" \
+  --domain "$域名" \
+  --english "$英文名" \
+  --founder "$创始人名" \
+  --output ./image/
+```
+
+脚本自动执行以下流程：
+- **Logo**: simpleicons.org → 官网HTML解析 → 常见路径
+- **创始人**: 百度百科 → 官网关于我们页面
+- **产品图**: 官网产品页 → 产品详情子页面
+
+脚本特性：自动去重、图片有效性校验（PIL verify）、跳过HTML响应、User-Agent轮换。
+
+全部失败才标注"图片待补充"。
+
+**Logo 抓取（手动备选）：**
 
 | 优先级 | 方法 | 说明 |
 |--------|------|------|
 | ① | `curl cdn.simpleicons.org/<英文名>` | SimpleIcons CDN（Cloudflare），国内可达 |
-| ② | WebSearch 中文搜索 + curl | 搜"公司名 logo 百度百科"，从中文网页提取 |
-| ③ | curl 官网 `grep -i icon` | 从官网HTML提取favicon或og:image |
-| ④ | WebSearch 英文兜底 + curl | `公司英文名 press kit logo` |
+| ② | curl 官网 `grep -i icon` | 从官网HTML提取favicon或og:image |
+| ③ | 手动搜索百度百科 + curl | 搜"公司名 logo 百度百科" |
 
-**创始人/CEO照片抓取：**
+**创始人/CEO照片抓取（手动备选）：**
 
 | 优先级 | 方法 | 搜索词示例 |
 |--------|------|-----------|
-| ① | WebSearch 中文搜索 + curl | `王传福 照片` 或 `王传福 肖像` |
-| ② | WebSearch 百科/新闻类 + curl | `王传福 百度百科 图片` |
-| ③ | WebSearch 英文 + curl | `Jensen Huang photo` |
+| ① | 百度百科页面提取 + curl | `林宜龙 百度百科` |
+| ② | 官网关于我们页面提取 | 过滤logo/icon类图片 |
 
-**产品图抓取（优先中文站点）：**
+**产品图抓取（手动备选）：**
 
 | 优先级 | 方法 | 说明 |
 |--------|------|------|
-| ① | WebSearch 中文 + curl | 搜"公司名 产品 评测"，从汽车之家/中关村在线等国内媒体找图 |
-| ② | curl 官网产品页 `grep -i img` | 从官网产品页提取大图URL，优先含 `large`/`high` 的链接 |
-| ③ | WebSearch 英文兜底 | `company product official photo` |
+| ① | 官网产品页提取 | 支持 data-src 懒加载 |
+| ② | 产品详情子页面提取 | 点进具体产品页找大图 |
 
 关键技巧：
 - **中文搜索优先**：国内科技媒体图片走国内CDN加速，下载成功率高

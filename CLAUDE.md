@@ -33,9 +33,10 @@
 ```
 [公司名]/
 ├── image/
-│   ├── logo.*           ← 公司Logo
-│   ├── founder.*        ← 创始人/CEO照片
-│   └── product.*        ← 核心产品图
+│   ├── logo_[英文名].*         ← 公司Logo（如 logo_huawei.svg）
+│   ├── founder_[人名].*        ← 创始人/CEO照片（如 founder_任正非.jpg）
+│   ├── product_[产品名].*      ← 核心产品图（如 product_AOI光学检测设备.png）
+│   └── app_[应用名].*          ← 互联网公司App图标（如 app_百度.png）
 ├── [公司名]_企业分析.md      ← 必出
 ├── [公司名]_企业分析.pdf      ← 必出
 └── [公司名]_企业分析.docx     ← 必出

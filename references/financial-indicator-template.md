@@ -22,18 +22,43 @@
 | 企业类型 | 营收/利润/毛利率/现金流 | 研发投入 | 员工 | 总资产 |
 |----------|-----------------------|---------|------|--------|
 | **A股上市** | 年报（巨潮资讯网/东方财富/同花顺） | 年报可查 | 年报可查 | 年报可查 |
+| **美股上市** | SEC 10-K年报（sec.gov EDGAR） | 10-K可查 | 10-K可查 | 10-K可查 |
 | **非上市大企业** | 官网/新闻稿/搜狗搜索 | 部分可查 | ✅ 官网 | 部分可查 |
 | **中小企业** | 搜狗注册信息（仅营收估算） | ❌ | ✅ 官网 | ❌ |
 
-## 获取工具（A股上市）
+## 获取工具
 
-Python (akshare):
+### A股上市（akshare）
+
 ```python
 import akshare as ak
 df = ak.stock_financial_abstract_ths(symbol='002261', indicator='按年度')
 ```
 
 返回字段：报告期、净利润、净利润同比增长率、扣非净利润、营业总收入、营业总收入同比增长率、基本每股收益、每股净资产、每股经营现金流、销售净利率、销售毛利率、资产负债率。
+
+### 美股上市（SEC EDGAR 10-K）
+
+NVIDIA（NVDA）实测可行的工作流：
+
+1. 从SEC EDGAR搜索公司10-K文件：`https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={CIK}&type=10-K`
+2. 公司CIK可在公司官网投资者页面或Wikipedia查到（如NVIDIA的CIK为0001045810）
+3. 10-K年报包含完整的iXBRL结构化财务数据，可直接解析营收、毛利率、净利润、经营现金流、研发投入、员工数、总资产等全部10项指标
+4. 注意财年（FY）与自然年的区别——NVIDIA财年截止1月（如FY2025截止2025年1月），报告时需标注为FY年份
+
+**关键字段映射（10-K iXBRL标签）：**
+
+| 指标 | SEC标签关键词 |
+|------|-------------|
+| 营收 | Revenue / Total Revenue |
+| 毛利率 | Gross Profit Ratio / Gross Margin |
+| 归母净利润 | Net Income Attributable to Parent |
+| 经营现金流 | Net Cash Provided by Operating Activities |
+| 研发投入 | Research and Development Expense |
+| 员工总数 | Employees（Item 1描述中，非结构化） |
+| 总资产 | Total Assets |
+
+员工总数通常在10-K的Item 1（Business）描述中，不在iXBRL结构化数据内。可从Wikipedia财务附表（引用10-K数据）或原文搜索获取。
 
 ## 不可获取时的处理
 

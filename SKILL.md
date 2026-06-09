@@ -62,6 +62,9 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 | 企业类型 | 营收/利润/现金流/资产/毛利率 | 研发投入 | 员工 | 来源工具 |
 |----------|---------------------------|---------|------|---------|
 | **A股上市** | ✅ 年报（巨潮/东方财富/同花顺） | ✅ 年报可查 | ✅ 年报可查 | `akshare.stock_financial_abstract_ths()` |
+| **美股上市** | ✅ SEC 10-K年报（sec.gov EDGAR） | ✅ 10-K可查 | ✅ 10-K可查 | 浏览器搜索 + curl解析iXBRL |
+| **港股上市** | ✅ 年报（港交所/雅虎财经） | ✅ 年报可查 | ✅ 年报可查 | `yfinance` |
+| **已提交IPO申请（未上市）** | ✅ 招股说明书 | ✅ 可查 | ✅ 可查 | 搜狗搜索新闻摘要 + 上交所/港交所官网。科创板/创业板招股书含3年完整财务数据，不要默认"未公开披露"，先搜"公司名+招股说明书+营收"确认。示例：宇树科技2026年3月科创板IPO，招股书营收1.59亿→3.93亿→16.99亿 |
 | **非上市大企业** | 官网/新闻稿/搜狗搜索 | 部分可查 | ✅ | 官网+百度百科+搜狗 |
 | **中小企业** | 搜狗注册信息（仅营收估算） | ❌ | ✅ 官网 | 标注"未公开披露" |
 
@@ -265,7 +268,7 @@ Logo 抓取:
 
 嵌入报告时使用 `[图片:类型:描述]` 占位标记：
 - `[图片:logo:xxx]` → h1同一行右上角，height=28px，右浮动（不单独占行），两页版必用此模式
-- `[图片:founder:xxx]` → "核心人物"板块右侧，矩形（非圆形），width≤90px，圆角2px，带品牌色边框，flex-direction: row-reverse 排到右侧
+- `[图片:founder:xxx]` → "核心人物"板块右侧，矩形（非圆形），`align-items: stretch` + `object-fit: contain` 使图片高度与文字栏一致，`max-height: 110px`，圆角4px，带品牌色边框
 - `[图片:product:xxx]` → 用于"相关产品"展示区（PDF底部），至少4个不同领域产品图标并排，width≤100px；纯互联网公司用App图标统一展示
 - `[图片:app:xxx]` → 互联网公司App图标，width≤60px，与产品图同样式统一展示
 
@@ -394,15 +397,15 @@ tr:nth-child(even) td { background: #F1F5F9; }
 ### 其他PDF要求
 
 - A4纸张 · 边距 **1.5-1.8cm**（不低于1.3）
-- h1公司名与logo flex同行（h1左 logo右），h1字号**22pt**品牌色
+- **h1只用公司名**（如"华为""NVIDIA"），不附加"企业分析"或股票代码。h1与logo flex同行（h1左 logo右），字号20-22pt品牌色
 - blockquote 使用 `text-align: justify` 两端对齐，line-height ≥ 1.85
-- 段落 margin-bottom ≥ 0.5em（非 0.15em）
-- h2 上间距 ≥ 0.9em（与上文拉开呼吸空间），下间距 0.3em（与内容形成归属关系）
-- 关键数据用 `.hl { color: var(--brand); font-weight: bold; }` 高亮
+- 段落 margin-bottom ≥ 0.3em
+- h2 上间距 ≥ 0.65em，下间距 0.25em
+- `.hl { color: var(--brand); font-weight: bold; white-space: nowrap; }` — 新增 `white-space: nowrap` 防止两端对齐拉伸英文品牌词之间的空格。对于 "GeForce RTX" 等含空格的英文词组，还需将空格替换为 `&nbsp;`（如 `GeForce&nbsp;RTX`），因为 `white-space: nowrap` 只禁止换行，`text-align: justify` 仍可拉伸普通空格
 - 去掉所有`---`分隔线，板块间用自然间距分隔
 - **相关产品展示区**：标题"相关产品"12pt，产品图 width≥100px，gap≥0.8em。可用浅灰背景框 `background: #F8FAFC; border-radius: 6px; padding: 0.6em 0.8em` 与上文视觉隔断
-- 创始人图片矩形，width≤90px，flex-direction: row-reverse 排到右侧
-- 产品标签 font-size ≥ 8.5pt，副标签 ≥ 7.5pt（6.5pt在印刷品中无法阅读）
+- **创始人图片**：`width: auto; max-height: 110px; object-fit: contain` — 使用 `align-items: stretch` + `width: auto` 让图片高度与文字栏一致，`object-fit: contain` 保持原始宽高比。父容器 `.founder-row { display: flex; align-items: stretch; flex-direction: row-reverse; }`
+- 产品标签 font-size ≥ 8pt，副标签 ≥ 7pt
 
 使用 `:root { --brand: 华为#cf0a2c / 百度#2932e1 / NVIDIA#76b900; }` CSS自定义属性统一品牌色
 
@@ -465,11 +468,11 @@ tr:nth-child(even) td { background: #F1F5F9; }
 
 12. **两页PDF排版失衡**：当第二页仅包含产品展示区+数据源等少量内容时，不要直觉性地缩小字号试图"拉回"内容。应反向操作——增大的字号+行高+间距，让页1内容自然溢出到页2，同时单独放大页2各元素的视觉占位（blockquote字号+0.5pt、产品图面积翻倍等）。详细方法论见 `references/page-balance-technique.md`。
 
-14. **核心人物板块独立布局**：用户明确要求核心人物板块不应与其他维度（如技术与知识产权）分栏并排。核心人物应单独一栏全宽展示，创始人照片在右侧（flex-direction: row-reverse）。若内容少只保留创始人一人即可，不需要列出所有管理层。
+13. **核心人物板块独立布局**：用户明确要求核心人物板块不应与其他维度（如技术与知识产权）分栏并排。核心人物应单独一栏全宽展示，创始人照片在右侧（flex-direction: row-reverse）。若内容少只保留创始人一人即可，不需要列出所有管理层。
 
-13. **中文排版偏好**：用户偏好自然语句叙述而非标签式列表。正文应使用 text-align: justify 两端对齐，line-height >= 1.8 保证中文可读性。blockquote 内用完整句子而非 **字段名**：值 · 值 · 值 格式。
+14. **中文排版偏好**：用户偏好自然语句叙述而非标签式列表。正文应使用 text-align: justify 两端对齐，line-height >= 1.8 保证中文可读性。blockquote 内用完整句子而非 **字段名**：值 · 值 · 值 格式。
 
-14. **字体与字号层级**：h1=20-22pt 品牌色，h2=13pt 加下边线 Medium字重，正文=10-10.5pt，blockquote=9.5-10pt，表格 >= 9pt。产品图标签 >= 8.5pt 副标签 >= 7.5pt。使用 :root { --brand: #2563EB; } 统一品牌色，body 文本色用 slate-800（#1e293b）而非纯黑。
+15. **字体与字号层级**：h1=20-22pt 品牌色，h2=13pt 加下边线 Medium字重，正文=10-10.5pt，blockquote=9.5-10pt，表格 >= 9pt。产品图标签 >= 8.5pt 副标签 >= 7.5pt。使用 :root { --brand: #2563EB; } 统一品牌色，body 文本色用 slate-800（#1e293b）而非纯黑。
 
 15. **@font-face 路径指向 /usr/share/fonts/opentype/noto/ 而非 truetype/noto/**：Ubuntu 22.04 的 Noto Sans CJK 字体文件在 `/usr/share/fonts/opentype/noto/` 目录下。`truetype/noto/` 只有 emoji 和 mono 字体，不含 CJK 字符集。路径写错（指向 truetype）时 WeasyPrint 不会报错，但会回退到系统默认字体渲染中文，导致字距凌乱、排版效果全失。**生成PDF前必须验证**：
     ```bash
@@ -512,3 +515,5 @@ tr:nth-child(even) td { background: #F1F5F9; }
     table th { background: var(--brand-dark); }
     .tag { background: var(--brand-light); color: var(--brand-dark); }
     ```
+
+22. **justify对齐拉伸英文词组间距**：`text-align: justify` 在中文段落中对英文词组（如"GeForce RTX"）之间的空格施加两端对齐拉伸，导致预期外的空白。`white-space: nowrap` 可防止换行但**不阻止 justify 拉伸内部普通空格**。修复方案分两层：① `.hl` 类添加 `white-space: nowrap` 防止整体换行；② 英文词组内部的空格替换为 `&nbsp;`（如 `GeForce&nbsp;RTX`），非断行空格不受 justify 拉伸。

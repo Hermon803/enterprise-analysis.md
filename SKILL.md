@@ -8,7 +8,7 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 ## 约束规则（必须遵守）
 
 1. **维度锁定**：最终报告有且仅有以下六个维度，不得增减、合并或扩展：
-   ① 企业介绍与主营业务 / ② 核心人物 / ③ 技术与知识产权 / ④ 经济贡献与经营数据 / ⑤ 供应链与区域布局 / ⑥ 竞争与市场结构
+   ① 企业介绍与主营业务 / ② 核心人物 / ③ 技术与知识产权 / ④ 经济贡献与经营数据 / ⑤ 供应链与区域布局 / ⑥ 市场份额与生态安全
 
 2. **制品固定**：每个分析必须生成且仅生成三种文件：
    - `[公司名]_企业分析.md` — Markdown 报告
@@ -21,7 +21,8 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 5. **核心产品展示**：报告底部（数据源上方）增设"核心产品"展示区，以表格形式展示（两列：产品名称 | 产品介绍），至少4个产品。纯互联网公司展示核心App或服务，同样≥4个。这是视觉/版面元素，不属于分析维度，不违反第1条的维度锁定。
 6. **模板性质**：下方报告模板为内容指引，PDF实际排版需按两页限制做密度优化，并非逐字逐段输出。
 7. **语言**：若用户用中文提问，全部输出为中文（包括报告内容、表格头、来源标注）。
-8. **免责声明**：每个PDF报告底部、数据来源下方，必须添加：`以上内容均为 AI 生产，仅供参考`，并标注使用的AI模型（deepseek-v4-flash）和Agent工具（Hermes Agent）。
+8. **内容客观性**：全文必须客观陈述事实，禁止使用"绝对主导""遥遥领先""核心壁垒""无可争议"等主观/夸张表述。应以数据驱动（"市场份额约X%""用户量达X"）替代价值判断。第⑥板块"市场份额与生态安全"尤其注意只陈述市场份额数据和竞争格局事实，不做优劣定性。
+9. **免责声明**：每个PDF报告底部、数据来源下方，必须添加：`以上内容均为 AI 生产，仅供参考`，并标注使用的AI模型（deepseek-v4-flash）和Agent工具（Hermes Agent）。
 
 ## 用法
 
@@ -115,9 +116,9 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 
 > 公司核心芯片/技术来自[供应商]，[国产化程度]。总部位于[城市]，研发中心分布于[多个城市]，生产基地位于[多个城市]。旗下子公司包括...
 
-## ⑥ 竞争与市场结构
+## ⑥ 市场份额与生态安全
 
-> [公司名]主营业务覆盖[领域]，在该领域的主要竞争者包括[竞争者A]、[竞争者B]。公司在[具体指标]方面处于[位置]，[优势/劣势描述]。需关注的风险包括[风险因素]。
+> [公司名]在[市场/领域]占有[X]%市场份额，主要竞争对手包括[竞争者A]、[竞争者B]。核心生态壁垒在于[技术/平台/开发者生态]。需关注的生态安全风险包括[风险因素A]、[风险因素B]。
 ```
 
 > ⚠️ **两页版说明**：以上模板为内容指引。PDF实际排版需做压缩——blockquote 内用自然语句而非 `·` 分隔，**禁止使用 `·` 间隔符做字段分隔**。表格字号≤9pt，边距1.3-1.5cm。
@@ -346,7 +347,7 @@ tr:nth-child(even) td { background: #F1F5F9; }
 - **h1下方标注地区**：国外企业标注所属国家（如"美国"）；国内企业标注省+市（如"杭州""长沙"）；深圳市内企业标注深圳市+区（如"深圳市南山区"）。字号9-10pt，品牌色或灰色
 - **地区与标签合并一行**：地区和标签放在同一行，用 `/` 分隔。标签使用 `<span class="tag">` 包裹，品牌色系统一（非多色循环），CSS如下：
   ```css
-  .meta { font-size: 9pt; color: var(--text-sec); margin-bottom: 0.55em; display: flex; flex-wrap: wrap; gap: 3px 0; }
+  .meta { font-size: 9pt; color: var(--text-sec); margin-bottom: 0.55em; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .meta .sep { color: #CBD5E1; margin: 0 5px; }
   .meta .tag { display: inline-block; font-size: 7.5pt; padding: 0 7px; border-radius: 3px; line-height: 1.7; background: var(--brand-light); color: var(--brand-dark); border: 0.5px solid color-mix(in srgb, var(--brand) 40%, transparent); }
   ```
@@ -365,7 +366,7 @@ tr:nth-child(even) td { background: #F1F5F9; }
 - **核心产品展示区**：标题"核心产品"12pt，表格形式，两列（产品名称 | 产品介绍），至少4行。产品名称加粗，产品介绍简要说明（一行以内）。可用浅灰背景框 `background: #F8FAFC; border-radius: 6px; padding: 0.6em 0.8em` 与上文视觉隔断
 - **创始人图片**：`width: auto; max-height: 110px; object-fit: contain` — 使用 `align-items: stretch` + `width: auto` 让图片高度与文字栏一致，`object-fit: contain` 保持原始宽高比。父容器 `.founder-row { display: flex; align-items: stretch; flex-direction: row-reverse; }`
 - 产品标签 font-size ≥ 8pt，副标签 ≥ 7pt
-- **免责声明**：PDF报告底部，数据来源下方另起一行，左对齐。字号6.5pt，浅灰色 #CBD5E1，与数据来源（7pt, #94A3B8）通过字号和颜色形成两级区分。不加分隔线。格式：`以上内容均为 AI 生产，仅供参考 · 模型：{model} · Agent：{agent}`
+- **免责声明**：PDF报告底部，数据来源下方另起一行，左对齐，与数据来源使用统一颜色 #64748B。字号6.5pt。数据来源7pt。两行之间不加分隔线。格式：`以上内容均为 AI 生产，仅供参考 · 模型：{model} · Agent：{agent}`
 
 使用 `:root { --brand: 华为#cf0a2c / 百度#2932e1 / NVIDIA#76b900; }` CSS自定义属性统一品牌色。
 h2使用 `--brand-dark`（比品牌色更深一号），与h1的品牌色形成层级区分，而非共用同一颜色。

@@ -45,12 +45,12 @@ NVIDIA在AI计算GPU市场份额约80%以上，全球TOP500超算中75%以上基
 
 | 产品名称 | 发布时间 | 产品介绍 |
 |---------|---------|---------|
+| Vera Rubin NVL72 | 2026年3月 | 新一代AI平台，7颗新芯片投产，面向Agentic AI推理 |
+| Vera CPU Rack | 2026年3月 | 256颗Vera CPU液冷机架，AI工厂推理基础设施 |
 | RTX 5090 | 2025年1月 | Blackwell架构消费级GPU，支持DLSS 4与全景光线追踪 |
-| H200 NVL | 2024年11月 | Hopper架构AI推理主力，搭载HBM3e高带宽内存 |
-| Blackwell B200 | 2024年3月 | 新一代AI训练GPU，集成2080亿晶体管，面向万亿参数大模型 |
+| Blackwell B200 | 2024年3月 | AI训练GPU，集成2080亿晶体管，面向万亿参数大模型 |
 | Drive Thor | 2024年 | 集中式车载计算平台，支持自动驾驶与座舱AI融合 |
-| Grace Hopper超级芯片 | 2023年5月 | ARM CPU+NVIDIA GPU融合架构，支持NVLink-C2C互联 |
-| H100 GPU | 2022年3月 | Hopper架构数据中心AI主力GPU，Tensor Core加速训练 |
+| H200 NVL | 2024年11月 | Hopper架构AI推理主力，搭载HBM3e高带宽内存 |
 
 > 以上内容均为 AI 生产，仅供参考 | 模型：deepseek-v4-flash | Agent：Hermes Agent
 

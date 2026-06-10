@@ -18,9 +18,10 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 3. **数据溯源**：每项数据必须标注来源，禁止编造，多源交叉验证。
 
 4. **篇幅限制**：PDF最终产物不超过两页A4。所有内容（含图片）必须压缩在2页内，经济数据表固定10项指标（见下文模板），不限制具体行数但需控制列宽和字号（≤9pt）。
-5. **相关产品展示**：报告底部（数据源上方）增设"相关产品"视觉展示区，展示**至少4个不同领域**的产品图片，每个领域选最具代表性的1个，并排展示。这是视觉/版面元素，不属于分析维度，不违反第1条的维度锁定。纯互联网公司无实体产品时，展示代表性App图标（使用simpleicons或官网下载），同样≥4个。
+5. **核心产品展示**：报告底部（数据源上方）增设"核心产品"展示区，以表格形式展示（两列：产品名称 | 产品介绍），至少4个产品。纯互联网公司展示核心App或服务，同样≥4个。这是视觉/版面元素，不属于分析维度，不违反第1条的维度锁定。
 6. **模板性质**：下方报告模板为内容指引，PDF实际排版需按两页限制做密度优化，并非逐字逐段输出。
 7. **语言**：若用户用中文提问，全部输出为中文（包括报告内容、表格头、来源标注）。
+8. **免责声明**：每个PDF报告底部、数据来源下方，必须添加：`以上内容均为 AI 生产，仅供参考`，并标注使用的AI模型（deepseek-v4-flash）和Agent工具（Hermes Agent）。
 
 ## 用法
 
@@ -77,6 +78,12 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 参考风格（每个维度一段话，而非列表）：
 
 ```
+# [公司名]
+
+**深圳**                      ← h1名称下方，仅标注地区
+
+<span class="tag">信创龙头</span><span class="tag">A股上市</span><span class="tag">鸿蒙生态</span>   ← Tag标签行，用户提供
+
 ## ① 企业介绍与主营业务
 
 > [公司名]成立于[年份]，[上市/未上市]，总部位于[城市]，是国内领先的[定位]。公司主营业务为[一句话概括]，覆盖[领域A]、[领域B]、[领域C]等行业。
@@ -112,15 +119,15 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 
 ## ⑥ 竞争与市场结构
 
-> [公司名]在[行业]领域属于[规模级别]企业（营收约[X]亿元），主要竞争者包括...。公司差异化优势在于...。需关注的风险包括...
+> [公司名]主营业务覆盖[领域]，在该领域的主要竞争者包括[竞争者A]、[竞争者B]。公司在[具体指标]方面处于[位置]，[优势/劣势描述]。需关注的风险包括[风险因素]。
 ```
 
-> ⚠️ **两页版说明**：以上模板为内容指引。PDF实际排版需做压缩——blockquote 内用自然语句而非 `·` 分隔，**禁止使用 `·` 间隔符做字段分隔**（如 `**定位**：软件服务商 · A股上市 · 长沙`），应将信息整合为完整通顺的介绍语句（如"公司总部位于长沙，成立于1996年，在深交所A股上市"）。表格字号≤9pt，边距1.3-1.5cm。
+> ⚠️ **两页版说明**：以上模板为内容指引。PDF实际排版需做压缩——blockquote 内用自然语句而非 `·` 分隔，**禁止使用 `·` 间隔符做字段分隔**。表格字号≤9pt，边距1.3-1.5cm。
 ```
 
 ### Step 3 — 图片搜集（强制执行，无图不交付）
 
-**图片是报告的必需组成部分，严禁跳过。** 三张图缺一不可。
+**图片是报告的必需组成部分，严禁跳过。** Logo和创始人照片缺一不可。
 
 #### Step 3a — 优先使用用户提供的图片
 
@@ -130,26 +137,20 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 # 用户可在 image/ 目录下预先放入以下文件（可选全部或部分）：
 #   logo.png / logo.jpg / logo.svg       ← 公司 Logo
 #   founder.png / founder.jpg             ← 创始人照片
-#   product_*.png / product_*.jpg         ← 产品图（至少4张）
 
 image_dir="./image"
-found_existing=false
 
 # Logo
 for f in "$image_dir"/logo.*; do
-  [ -f "$f" ] && echo "✅ 使用已有 Logo: $f" && found_existing=true && break
+  [ -f "$f" ] && echo "✅ 使用已有 Logo: $f" && found_logo=true && break
 done
-[ "$found_existing" = false ] && echo "⏳ Logo 需要自动抓取"
+[ -z "$found_logo" ] && echo "⏳ Logo 需要自动抓取"
 
 # 创始人照片
-found_existing=false
 for f in "$image_dir"/founder.*; do
-  [ -f "$f" ] && echo "✅ 使用已有创始人照片: $f" && found_existing=true && break
+  [ -f "$f" ] && echo "✅ 使用已有创始人照片: $f" && found_founder=true && break
 done
-
-# 产品图
-count=$(ls "$image_dir"/product_* 2>/dev/null | wc -l)
-[ "$count" -ge 4 ] && echo "✅ 使用已有产品图 ${count}张" || echo "⏳ 产品图不足（${count}/4），需要自动抓取"
+[ -z "$found_founder" ] && echo "⏳ 创始人照片需要自动抓取"
 ```
 
 找到的图片跳过抓取阶段，直接进入 Step 4 的 base64 嵌入。部分缺失时仅抓取缺失项。
@@ -168,24 +169,15 @@ python3 scripts/fetch_images.py \
 ```
 
 脚本自动执行以下流程，依次尝试各来源，**找到即停**：
-- **Logo**: simpleicons.org → 官网HTML解析(icon/og:image/logo图) → 常见路径
-- **创始人**: 百度百科 → 官网关于我们页面(排除产品和logo类图片)
-- **产品图**: 官网产品页(支持懒加载 data-src) → 产品详情子页面
+- **Logo**: simpleicons.org → 官网HTML解析(icon/og:image) → 常见路径
+- **创始人**: 百度百科 → 官网关于我们页面(排除产品类图片)
 
 **脚本特性：**
-- 自动去重：产品图不会与已下载的logo/创始人图重复
 - 图片有效性校验（PIL verify，不只是看HTTP status）
 - 跳过返回HTML的无效响应
 - User-Agent轮换防拦截
 
-全部失败才标注"图片待补充"。同时输出图片需求清单供跟踪：
-
-```yaml
-图片需求:
-  - id: logo      描述: "公司Logo"        来源: "simpleicons/官网"   状态: 待抓取
-  - id: founder   描述: "创始人照片"        来源: "百度百科/官网"      状态: 待抓取
-  - id: product   描述: "核心产品图"        来源: "官网产品页"         状态: 待抓取
-```
+全部失败才标注"图片待补充"。
 
 #### Logo 抓取（按优先级依次尝试，找到即停）
 
@@ -213,21 +205,6 @@ file /tmp/logo_check   # 应输出 "PNG/JPEG/SVG image data"
 | ② | 官网关于我们/团队页面 | 过滤logo/icon/product类图片，优先含 people/team/headshot 关键词的URL |
 | ③ | WebSearch 英文兜底 | `founder name photo official` |
 
-#### 产品图抓取
-
-**优先搜索国内中文站点**，按优先级依次尝试：
-
-| 优先级 | 方法 | 说明 |
-|--------|------|------|
-| ① | WebSearch 中文搜索 + curl | 搜"公司名 产品 评测"，从汽车之家/中关村在线/太平洋科技/IT之家等国内媒体找图 |
-| ② | curl 官网产品页 `grep -i img` | 从官网产品页提取大图URL，优先含 `large`/`high`/`1920` 的链接 |
-| ③ | WebSearch 通用英文兜底 | `company product official photo press` |
-
-关键技巧：
-- **中文搜索优先**：国内科技媒体（汽车之家、中关村在线、太平洋科技、IT之家等）图片走国内CDN加速，下载成功率高
-- 对懒加载网站，检查 `data-src`、`data-original` 属性
-- 图片URL优先选**大分辨率**（含 `large`、`high`、`1920` 等关键词）
-
 #### 图片源可达性（实测）
 
 **⚠️ 关键发现：WebFetch ≠ 真实网络。** WebFetch 工具有域名安全策略，会拒绝访问 nvidia.com 等知名站点。但 **curl/Bash 不受此限制**。图片抓取阶段应**全部用 Bash(curl) 下载**，WebFetch 仅用于分析HTML文本。
@@ -237,8 +214,7 @@ file /tmp/logo_check   # 应输出 "PNG/JPEG/SVG image data"
 | 来源 | 说明 |
 |------|------|
 | `cdn.simpleicons.org`（Cloudflare） | SimpleIcons，知名公司Logo首选，curl直达 |
-| 百度系（baidu.com / baike.baidu.com） | 中文搜索Logo/产品图首选 |
-| 国内科技媒体（汽车之家/中关村在线/太平洋/IT之家等） | 含大量产品实拍图，国内CDN加速 |
+| 百度系（baidu.com / baike.baidu.com） | 中文搜索Logo首选 |
 | 公司官网（通过 Bash curl） | 官网路径需摸索但连接可达 |
 
 **国内不可达源 ❌**
@@ -251,26 +227,9 @@ file /tmp/logo_check   # 应输出 "PNG/JPEG/SVG image data"
 | `raw.githubusercontent.com` | HTTP 403 |
 | 境外官网CDN（如 `images.nvidia.com`） | 连接可达但具体路径需摸索 |
 
-#### 实操策略速查
-
-```
-Logo 抓取:
-  ① curl cdn.simpleicons.org/{英文名}
-  ② WebSearch 中文"公司名 logo" → 百度百科 → curl图片URL
-  ③ curl 官网 | grep -iE 'icon|favicon|og:image' → 提取URL → curl下载
-
-产品图抓取:
-  ① WebSearch 中文"公司名 产品 评测" → 国内科技媒体 → curl图片URL
-  ② curl 官网产品页 | grep -iE 'img.*jpg|img.*png' → 提取URL → curl下载
-
-兜底: 全部失败则纯文字输出，标注 [图片待补充]
-```
-
 嵌入报告时使用 `[图片:类型:描述]` 占位标记：
 - `[图片:logo:xxx]` → h1同一行右上角，height=28px，右浮动（不单独占行），两页版必用此模式
 - `[图片:founder:xxx]` → "核心人物"板块右侧，矩形（非圆形），`align-items: stretch` + `object-fit: contain` 使图片高度与文字栏一致，`max-height: 110px`，圆角4px，带品牌色边框
-- `[图片:product:xxx]` → 用于"相关产品"展示区（PDF底部），至少4个不同领域产品图标并排，width≤100px；纯互联网公司用App图标统一展示
-- `[图片:app:xxx]` → 互联网公司App图标，width≤60px，与产品图同样式统一展示
 
 ### Step 4 — 生成HTML并转PDF
 
@@ -288,11 +247,6 @@ def find_image(prefix):
         path = os.path.join(img_dir, prefix + ext)
         if os.path.exists(path):
             return path
-    # 也支持 product_*.png 通配
-    if prefix.startswith('product_'):
-        import glob
-        files = sorted(glob.glob(os.path.join(img_dir, 'product_*')))
-        return files[0] if files else None
     return None
 
 def b64(path):
@@ -310,20 +264,9 @@ def b64(path):
 
 logo_b64 = b64(find_image('logo')) or ''
 founder_b64 = b64(find_image('founder')) or ''
-product_b64s = []
-for i in range(1, 5):
-    path = find_image(f'product_{i}') or find_image(f'product_0{i}')
-    if not path:
-        # 按通配查找
-        import glob
-        files = sorted(glob.glob(os.path.join(img_dir, 'product_*')))
-        if len(files) >= i:
-            path = files[i-1]
-    if path:
-        product_b64s.append(b64(path))
 ```
 
-PDF底部必须包含 **相关产品展示区**（至少4个不同领域产品并排），CSS模板见 `references/product-showcase-template.md`。
+PDF底部必须包含 **核心产品表格**（至少4个产品，两列：产品名称 | 产品介绍），用于替代原有的产品图展示区。
 
 关键坑：`<img>` 的 `src` 属性必须用**单引号** `src='data:...'`，不能用双引号。详见陷阱6。
 
@@ -398,14 +341,27 @@ tr:nth-child(even) td { background: #F1F5F9; }
 
 - A4纸张 · 边距 **1.5-1.8cm**（不低于1.3）
 - **h1只用公司名**（如"华为""NVIDIA"），不附加"企业分析"或股票代码。h1与logo flex同行（h1左 logo右），字号20-22pt品牌色
+- **h1下方标注地区**（如"深圳"），仅地区名，不含年份/股票代码等其他信息。字号9-10pt，品牌色或灰色
+- **地区下方标签行**（Tag行）：使用彩色标签框展示，每个标签独立 `<span>` 并应用不同背景色（`nth-child` 循环6色），字号7.5pt，带圆角和细边框。CSS模板如下：
+  ```css
+  .tags { margin-bottom: 0.45em; display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { display: inline-block; font-size: 7.5pt; padding: 1px 8px; border-radius: 3px; letter-spacing: 0.3px; line-height: 1.6; }
+  .tag:nth-child(1) { background: #EDF7D9; color: #5C8F00; border: 0.5px solid #B8E08A; }
+  .tag:nth-child(2) { background: #DBEAFE; color: #1D4ED8; border: 0.5px solid #93C5FD; }
+  .tag:nth-child(3) { background: #FCE7F3; color: #BE185D; border: 0.5px solid #F9A8D4; }
+  .tag:nth-child(4) { background: #FEF3C7; color: #B45309; border: 0.5px solid #FCD34D; }
+  .tag:nth-child(5) { background: #D1FAE5; color: #047857; border: 0.5px solid #6EE7B7; }
+  .tag:nth-child(6) { background: #E0E7FF; color: #3730A3; border: 0.5px solid #A5B4FC; }
+  ```
 - blockquote 使用 `text-align: justify` 两端对齐，line-height ≥ 1.85
 - 段落 margin-bottom ≥ 0.3em
 - h2 上间距 ≥ 0.65em，下间距 0.25em
 - `.hl { color: var(--brand); font-weight: bold; white-space: nowrap; }` — 新增 `white-space: nowrap` 防止两端对齐拉伸英文品牌词之间的空格。对于 "GeForce RTX" 等含空格的英文词组，还需将空格替换为 `&nbsp;`（如 `GeForce&nbsp;RTX`），因为 `white-space: nowrap` 只禁止换行，`text-align: justify` 仍可拉伸普通空格
 - 去掉所有`---`分隔线，板块间用自然间距分隔
-- **相关产品展示区**：标题"相关产品"12pt，产品图 width≥100px，gap≥0.8em。可用浅灰背景框 `background: #F8FAFC; border-radius: 6px; padding: 0.6em 0.8em` 与上文视觉隔断
+- **核心产品展示区**：标题"核心产品"12pt，表格形式，两列（产品名称 | 产品介绍），至少4行。产品名称加粗，产品介绍简要说明（一行以内）。可用浅灰背景框 `background: #F8FAFC; border-radius: 6px; padding: 0.6em 0.8em` 与上文视觉隔断
 - **创始人图片**：`width: auto; max-height: 110px; object-fit: contain` — 使用 `align-items: stretch` + `width: auto` 让图片高度与文字栏一致，`object-fit: contain` 保持原始宽高比。父容器 `.founder-row { display: flex; align-items: stretch; flex-direction: row-reverse; }`
 - 产品标签 font-size ≥ 8pt，副标签 ≥ 7pt
+- **免责声明**：PDF报告最后一行，数据来源下方，添加：`以上内容均为 AI 生产，仅供参考 | 模型：deepseek-v4-flash | Agent：Hermes Agent`。字号7pt，浅灰色 #94a3b8，右对齐
 
 使用 `:root { --brand: 华为#cf0a2c / 百度#2932e1 / NVIDIA#76b900; }` CSS自定义属性统一品牌色
 
@@ -424,7 +380,7 @@ tr:nth-child(even) td { background: #F1F5F9; }
 - `references/page-balance-technique.md` — 两页PDF排版失衡时（"版块以较少内容单独成页"）的反向调优技巧
 - `references/chinese-typography.md` — 中文排版CSS最佳实践（字号层级、两端对齐、自然语句风格、两页均衡策略）
 - `references/pdf-layout-checklist.md` — PDF排版检查清单（生成前逐项核对：字体路径/表格对齐/分页控制/色彩层级）
-
+- `references/core-products-table.md` — 核心产品展示区表格模板（替代旧版图片展示方式）
 ## 陷阱与注意事项
 
 1. **Web搜索/联网不可达时的工作区回退**：当用户拒绝网络搜索或网络不可达时，不要停止工作。优先搜索用户工作目录（如 `~/Progress/analysis/`、当前cwd）下是否有该公司的既有分析文件。如存在，提取结构化数据并标注"数据来源：已有存档，需交叉验证"，然后尝试增量补缺。
@@ -435,12 +391,9 @@ tr:nth-child(even) td { background: #F1F5F9; }
 
 4. **厂商CDN可能拦截curl**：部分企业官网（如华为 consumer-img.huawei.com）会拒绝无浏览器User-Agent的curl请求，返回HTML而非图片。应对策略：
 
-5. **SPA网站（Nuxt.js/Vue/React）没有服务端渲染图片URL**：拓维信息 talkweb.com.cn 使用 Nuxt.js，所有产品页/首页内容由 JS 动态渲染。fetch_images.py 的 `requests` + HTML regex 抓取不到任何图片URL。实战胜率极低。应对策略：
+5. **SPA网站（Nuxt.js/Vue/React）没有服务端渲染图片URL**：拓维信息 talkweb.com.cn 使用 Nuxt.js，所有产品页/首页内容由 JS 动态渲染。fetch_images.py 的 `requests` + HTML regex 抓取不到任何图片URL。应对策略：
    - **Logo → 直接 curl favicon.ico + PIL 转 PNG**：`curl -sL https://www.{domain}/favicon.ico -o /tmp/favicon.ico; python3 -c "from PIL import Image; Image.open('/tmp/favicon.ico').convert('RGB').save('image/logo.png')"`。SPA 站点通常至少配了 favicon。
-   - **产品图 → 生成彩色占位图**：所有图片源均失败时，用 PIL 生成 200×140 的色块 + 品名文字标注作为产品图。避免纯文字输出"图片待补充"降低报告观感。示例代码见 `references/spa-image-fallback.md`。
-   - 优先从第三方源（百度百科、科技媒体）获取产品图
    - 如官网CDN不可达，使用 `-H "User-Agent: Mozilla/5.0 ..."` 重试
-   - 产品图兜底：logo本身作为产品占位图，或留白标注"图片待补充"
    - 不编造、不使用侵权图片
 
 6. **境外图片源可能超时**：Wikimedia、GitHub等境外源可能不可达。优先使用国内CDN源（baidu.com、bcebos.com、jd.com等）。
@@ -460,19 +413,17 @@ tr:nth-child(even) td { background: #F1F5F9; }
     ```python
     from PIL import Image
     img = Image.open('founder.png')
-    img.thumbnail((400, 500), Image.LANCZOS)  # 缩小到合理尺寸
+    img.thumbnail((400, 500), Image.LANCZOS)
     if img.mode == 'RGBA': img = img.convert('RGB')
     img.save('founder_compressed.jpg', 'JPEG', quality=80, optimize=True)
     ```
     压缩后约 15-30KB，视觉差异极小。此步骤应在 base64 嵌入之前执行。
 
-12. **两页PDF排版失衡**：当第二页仅包含产品展示区+数据源等少量内容时，不要直觉性地缩小字号试图"拉回"内容。应反向操作——增大的字号+行高+间距，让页1内容自然溢出到页2，同时单独放大页2各元素的视觉占位（blockquote字号+0.5pt、产品图面积翻倍等）。详细方法论见 `references/page-balance-technique.md`。
+12. **两页PDF排版失衡**：当第二页仅包含核心产品表格+数据源等少量内容时，不要直觉性地缩小字号试图"拉回"内容。应反向操作——增大字号+行高+间距，让页1内容自然溢出到页2，同时单独放大页2各元素的视觉占位（blockquote字号+0.5pt、表格行高增加等）。详细方法论见 `references/page-balance-technique.md`。
 
-13. **核心人物板块独立布局**：用户明确要求核心人物板块不应与其他维度（如技术与知识产权）分栏并排。核心人物应单独一栏全宽展示，创始人照片在右侧（flex-direction: row-reverse）。若内容少只保留创始人一人即可，不需要列出所有管理层。
+13. **核心人物板块独立布局**：用户明确要求核心人物板块不应与其他维度（如技术与知识产权）分栏并排。核心人物应单独一栏全宽展示，创始人照片在右侧（flex-direction: row-reverse）。若内容少只保留创始人一人即可，不需要列出全部管理层。
 
 14. **中文排版偏好**：用户偏好自然语句叙述而非标签式列表。正文应使用 text-align: justify 两端对齐，line-height >= 1.8 保证中文可读性。blockquote 内用完整句子而非 **字段名**：值 · 值 · 值 格式。
-
-15. **字体与字号层级**：h1=20-22pt 品牌色，h2=13pt 加下边线 Medium字重，正文=10-10.5pt，blockquote=9.5-10pt，表格 >= 9pt。产品图标签 >= 8.5pt 副标签 >= 7.5pt。使用 :root { --brand: #2563EB; } 统一品牌色，body 文本色用 slate-800（#1e293b）而非纯黑。
 
 15. **@font-face 路径指向 /usr/share/fonts/opentype/noto/ 而非 truetype/noto/**：Ubuntu 22.04 的 Noto Sans CJK 字体文件在 `/usr/share/fonts/opentype/noto/` 目录下。`truetype/noto/` 只有 emoji 和 mono 字体，不含 CJK 字符集。路径写错（指向 truetype）时 WeasyPrint 不会报错，但会回退到系统默认字体渲染中文，导致字距凌乱、排版效果全失。**生成PDF前必须验证**：
     ```bash
@@ -483,30 +434,32 @@ tr:nth-child(even) td { background: #F1F5F9; }
     src: url('file:///usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc') format('truetype');
     ```
 
-16. **表格数字必须右对齐**：财务表格的数值列如果左对齐，不同位数的数字（如"4,496万" vs "31.54亿"）无法纵向比较。CSS 方案：
+16. **justify对齐拉伸英文词组间距**：`text-align: justify` 在中文段落中对英文词组（如"GeForce RTX"）之间的空格施加两端对齐拉伸，导致预期外的空白。`white-space: nowrap` 可防止换行但**不阻止 justify 拉伸内部普通空格**。修复方案分两层：① `.hl` 类添加 `white-space: nowrap` 防止整体换行；② 英文词组内部的空格替换为 `&nbsp;`（如 `GeForce&nbsp;RTX`），非断行空格不受 justify 拉伸。
+
+17. **表格数字必须右对齐**：财务表格的数值列如果左对齐，不同位数的数字（如"4,496万" vs "31.54亿"）无法纵向比较。CSS 方案：
     ```css
     table td:nth-child(2), table td:nth-child(3), table td:nth-child(4) { text-align: right; font-variant-numeric: tabular-nums; }
     table td:first-child { text-align: left; }
     ```
 
-17. **表格负值用红色标识**：`-1.005亿`、`-22.79%` 等负值必须用 `<span class="neg">` 包裹并添加 CSS `.neg { color: #DC2626; }`。这是财务报告行业惯例。
+18. **表格负值用红色标识**：`-1.005亿`、`-22.79%` 等负值必须用 `<span class="neg">` 包裹并添加 CSS `.neg { color: #DC2626; }`。这是财务报告行业惯例。
 
-18. **表格必须闭合（顶边线+底边线）**：仅有行间横线但无顶底边框线的表格在页面中缺乏视觉边界。必须添加：
+19. **表格必须闭合（顶边线+底边线）**：仅有行间横线但无顶底边框线的表格在页面中缺乏视觉边界。必须添加：
     ```css
     table { border-top: 2px solid var(--brand); }
     tr:last-child td { border-bottom: 2px solid var(--brand); }
     ```
 
-19. **段落间距不足导致阅读疲劳**：`p { margin-bottom: 0.15em }` 在中文排版中过密，段落间几乎无视觉分割。最小值 `0.5em`。长段落应使用 `<p>` 标签分隔而非 `<br><br>`，利用自动 margin 形成均匀间距。
+20. **段落间距不足导致阅读疲劳**：`p { margin-bottom: 0.15em }` 在中文排版中过密，段落间几乎无视觉分割。最小值 `0.5em`。长段落应使用 `<p>` 标签分隔而非 `<br><br>`，利用自动 margin 形成均匀间距。
 
-20. **缺少 widows/orphans 控制导致版面凌乱**：WeasyPrint 默认不会避免 h2 标题位于页面底部而内容在下页、或表格在行中间断裂。必须添加：
+21. **缺少 widows/orphans 控制导致版面凌乱**：WeasyPrint 默认不会避免 h2 标题位于页面底部而内容在下页、或表格在行中间断裂。必须添加：
     ```css
     h2, h3 { page-break-after: avoid; }
     table, .founder-row, .product-section, .bq { page-break-inside: avoid; }
     body { widows: 2; orphans: 2; }
     ```
 
-21. **缺乏色彩层次导致"一片蓝"**：所有强调元素（h1/h2/h3/table th/.hl/.tag/border-left）使用同一蓝色 `#2563EB` 时，页面缺少视觉梯度。引入深蓝/浅蓝变体：
+22. **缺乏色彩层次导致"一片蓝"**：所有强调元素（h1/h2/h3/table th/.hl/.tag/border-left）使用同一蓝色 `#2563EB` 时，页面缺少视觉梯度。引入深蓝/浅蓝变体：
     ```css
     :root {
       --brand-dark: #1D4ED8;   /* 表头背景 */
@@ -515,5 +468,3 @@ tr:nth-child(even) td { background: #F1F5F9; }
     table th { background: var(--brand-dark); }
     .tag { background: var(--brand-light); color: var(--brand-dark); }
     ```
-
-22. **justify对齐拉伸英文词组间距**：`text-align: justify` 在中文段落中对英文词组（如"GeForce RTX"）之间的空格施加两端对齐拉伸，导致预期外的空白。`white-space: nowrap` 可防止换行但**不阻止 justify 拉伸内部普通空格**。修复方案分两层：① `.hl` 类添加 `white-space: nowrap` 防止整体换行；② 英文词组内部的空格替换为 `&nbsp;`（如 `GeForce&nbsp;RTX`），非断行空格不受 justify 拉伸。

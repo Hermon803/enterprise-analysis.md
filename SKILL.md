@@ -80,9 +80,7 @@ description: AI产业链企业六维分析（企业介绍/核心人物/技术知
 ```
 # [公司名]
 
-**深圳**                      ← h1名称下方，仅标注地区
-
-<span class="tag">信创龙头</span><span class="tag">A股上市</span><span class="tag">鸿蒙生态</span>   ← Tag标签行，用户提供
+**深圳** / <span class="tag">信创龙头</span><span class="tag">A股上市</span><span class="tag">鸿蒙生态</span>   ← 地区+标签同一行，用/分隔
 
 ## ① 企业介绍与主营业务
 
@@ -228,7 +226,7 @@ file /tmp/logo_check   # 应输出 "PNG/JPEG/SVG image data"
 | 境外官网CDN（如 `images.nvidia.com`） | 连接可达但具体路径需摸索 |
 
 嵌入报告时使用 `[图片:类型:描述]` 占位标记：
-- `[图片:logo:xxx]` → h1同一行右上角，height=28px，右浮动（不单独占行），两页版必用此模式
+- `[图片:logo:xxx]` → h1同一行右上角，height=30-32px（与20pt h1视觉对齐），右浮动（不单独占行），两页版必用此模式
 - `[图片:founder:xxx]` → "核心人物"板块右侧，矩形（非圆形），`align-items: stretch` + `object-fit: contain` 使图片高度与文字栏一致，`max-height: 110px`，圆角4px，带品牌色边框
 
 ### Step 4 — 生成HTML并转PDF
@@ -300,19 +298,23 @@ table { page-break-inside: avoid; }
 .product-section { page-break-inside: avoid; }
 .bq { page-break-inside: avoid; }
 body { widows: 2; orphans: 2; }
+
+/* 两页均衡：在⑤供应链板块前强制分页，让页1承载①~④，页2承载⑤~⑥+核心产品+数据源 */
+h2:nth-of-type(5) { page-break-before: always; }
 ```
 
 ### 字体与字号层级
 
 | 层级 | 字号 | 字重 | 说明 |
 |------|------|------|------|
-| h1 | 20-22pt | Bold | 品牌色，letter-spacing 2px |
-| h2 | 13pt | **Medium** 或 Bold | 与正文拉开明显层级（>3pt差距），Border-bottom 1.5px |
-| 正文 p | 10-10.5pt | Regular | line-height 1.9，text-align: justify |
-| blockquote .bq | 9.5-10pt | Regular | line-height 1.85-1.9，padding 0.5em 0.8em |
-| 表格 | 9pt | Regular | 单元格 padding ≥4px 8px |
-| 产品标签 | 8.5pt | Regular | 副标签 ≥7.5pt |
-| 数据源 | 7.5pt | Regular | 浅灰色 #94a3b8 |
+| h1 | 20-22pt | Bold | 品牌色，letter-spacing 2px，logo高度30-32px与h1视觉对齐 |
+| h2 | 11-11.5pt | **Medium** 或 Bold | 使用 `--brand-dark`（比品牌色深一号），与h1形成层级区分 |
+| 正文 p | 10pt | Regular | line-height 1.9，text-align: justify |
+| blockquote .bq | 10pt | Regular | line-height 1.85-1.9，**无背景填充**，仅左边框 |
+| 注释型 .bq-note | 8.5pt | Regular | 灰色 #64748B，去左边框，用于财务数据后的解释说明 |
+| 表格 | 9pt | Regular | 单元格 padding ≥3px 8px |
+| 核心产品名称 | 9pt | Bold | 紧跟描述（8.5pt灰色），非表格格式 |
+| 数据源 | 7pt | Regular | 浅灰色 #94a3b8 |
 
 ### 表格设计规则
 
@@ -341,19 +343,21 @@ tr:nth-child(even) td { background: #F1F5F9; }
 
 - A4纸张 · 边距 **1.5-1.8cm**（不低于1.3）
 - **h1只用公司名**（如"华为""NVIDIA"），不附加"企业分析"或股票代码。h1与logo flex同行（h1左 logo右），字号20-22pt品牌色
-- **h1下方标注地区**（如"深圳"），仅地区名，不含年份/股票代码等其他信息。字号9-10pt，品牌色或灰色
-- **地区下方标签行**（Tag行）：使用彩色标签框展示，每个标签独立 `<span>` 并应用不同背景色（`nth-child` 循环6色），字号7.5pt，带圆角和细边框。CSS模板如下：
+- **h1下方标注地区**：国外企业标注所属国家（如"美国"）；国内企业标注省+市（如"杭州""长沙"）；深圳市内企业标注深圳市+区（如"深圳市南山区"）。字号9-10pt，品牌色或灰色
+- **地区与标签合并一行**：地区和标签放在同一行，用 `/` 分隔。标签使用 `<span class="tag">` 包裹，品牌色系统一（非多色循环），CSS如下：
   ```css
-  .tags { margin-bottom: 0.45em; display: flex; flex-wrap: wrap; gap: 4px; }
-  .tag { display: inline-block; font-size: 7.5pt; padding: 1px 8px; border-radius: 3px; letter-spacing: 0.3px; line-height: 1.6; }
-  .tag:nth-child(1) { background: #EDF7D9; color: #5C8F00; border: 0.5px solid #B8E08A; }
-  .tag:nth-child(2) { background: #DBEAFE; color: #1D4ED8; border: 0.5px solid #93C5FD; }
-  .tag:nth-child(3) { background: #FCE7F3; color: #BE185D; border: 0.5px solid #F9A8D4; }
-  .tag:nth-child(4) { background: #FEF3C7; color: #B45309; border: 0.5px solid #FCD34D; }
-  .tag:nth-child(5) { background: #D1FAE5; color: #047857; border: 0.5px solid #6EE7B7; }
-  .tag:nth-child(6) { background: #E0E7FF; color: #3730A3; border: 0.5px solid #A5B4FC; }
+  .meta { font-size: 9pt; color: var(--text-sec); margin-bottom: 0.55em; display: flex; flex-wrap: wrap; gap: 3px 0; }
+  .meta .sep { color: #CBD5E1; margin: 0 5px; }
+  .meta .tag { display: inline-block; font-size: 7.5pt; padding: 0 7px; border-radius: 3px; line-height: 1.7; background: var(--brand-light); color: var(--brand-dark); border: 0.5px solid color-mix(in srgb, var(--brand) 40%, transparent); }
   ```
-- blockquote 使用 `text-align: justify` 两端对齐，line-height ≥ 1.85
+- blockquote 使用 `text-align: justify` 两端对齐，line-height ≥ 1.85。**去掉背景填充色**，仅保留左边框（3px品牌色），视觉更清爽：
+  ```css
+  .bq { border-left: 3px solid var(--brand); padding: 0.35em 0 0.35em 0.8em; background: none; }
+  ```
+- **注释型blockquote**（如④经济数据后的注释）：缩小字号至8.5pt、灰色 #64748B，去掉左边框，以区别于正文blockquote：
+  ```css
+  .bq-note { font-size: 8.5pt; color: #64748B; border-left: none; padding-left: 0; }
+  ```
 - 段落 margin-bottom ≥ 0.3em
 - h2 上间距 ≥ 0.65em，下间距 0.25em
 - `.hl { color: var(--brand); font-weight: bold; white-space: nowrap; }` — 新增 `white-space: nowrap` 防止两端对齐拉伸英文品牌词之间的空格。对于 "GeForce RTX" 等含空格的英文词组，还需将空格替换为 `&nbsp;`（如 `GeForce&nbsp;RTX`），因为 `white-space: nowrap` 只禁止换行，`text-align: justify` 仍可拉伸普通空格
@@ -361,9 +365,10 @@ tr:nth-child(even) td { background: #F1F5F9; }
 - **核心产品展示区**：标题"核心产品"12pt，表格形式，两列（产品名称 | 产品介绍），至少4行。产品名称加粗，产品介绍简要说明（一行以内）。可用浅灰背景框 `background: #F8FAFC; border-radius: 6px; padding: 0.6em 0.8em` 与上文视觉隔断
 - **创始人图片**：`width: auto; max-height: 110px; object-fit: contain` — 使用 `align-items: stretch` + `width: auto` 让图片高度与文字栏一致，`object-fit: contain` 保持原始宽高比。父容器 `.founder-row { display: flex; align-items: stretch; flex-direction: row-reverse; }`
 - 产品标签 font-size ≥ 8pt，副标签 ≥ 7pt
-- **免责声明**：PDF报告最后一行，数据来源下方，添加：`以上内容均为 AI 生产，仅供参考 | 模型：deepseek-v4-flash | Agent：Hermes Agent`。字号7pt，浅灰色 #94a3b8，右对齐
+- **免责声明**：PDF报告底部，数据来源下方另起一行，左对齐。字号6.5pt，浅灰色 #CBD5E1，与数据来源（7pt, #94A3B8）通过字号和颜色形成两级区分。不加分隔线。格式：`以上内容均为 AI 生产，仅供参考 · 模型：{model} · Agent：{agent}`
 
-使用 `:root { --brand: 华为#cf0a2c / 百度#2932e1 / NVIDIA#76b900; }` CSS自定义属性统一品牌色
+使用 `:root { --brand: 华为#cf0a2c / 百度#2932e1 / NVIDIA#76b900; }` CSS自定义属性统一品牌色。
+h2使用 `--brand-dark`（比品牌色更深一号），与h1的品牌色形成层级区分，而非共用同一颜色。
 
 ## 参考文件
 
@@ -391,7 +396,9 @@ tr:nth-child(even) td { background: #F1F5F9; }
 
 4. **厂商CDN可能拦截curl**：部分企业官网（如华为 consumer-img.huawei.com）会拒绝无浏览器User-Agent的curl请求，返回HTML而非图片。应对策略：
 
-5. **SPA网站（Nuxt.js/Vue/React）没有服务端渲染图片URL**：拓维信息 talkweb.com.cn 使用 Nuxt.js，所有产品页/首页内容由 JS 动态渲染。fetch_images.py 的 `requests` + HTML regex 抓取不到任何图片URL。应对策略：
+5. **SPA网站（Nuxt.js/Vue/React）Logo抓取回退**：拓维信息 talkweb.com.cn 使用 Nuxt.js，首页由JS动态渲染。`fetch_images.py` 的 `requests` + HTML regex 抓取不到任何图片URL。应对策略：直接 curl favicon.ico + PIL 转 PNG：`curl -sL https://www.{domain}/favicon.ico -o /tmp/favicon.ico; python3 -c "from PIL import Image; Image.open('/tmp/favicon.ico').convert('RGB').save('image/logo.png')"`。SPA站点通常至少配了favicon。
+   - 如官网CDN不可达，使用 `-H "User-Agent: Mozilla/5.0 ..."` 重试
+   - 不编造、不使用侵权图片
    - **Logo → 直接 curl favicon.ico + PIL 转 PNG**：`curl -sL https://www.{domain}/favicon.ico -o /tmp/favicon.ico; python3 -c "from PIL import Image; Image.open('/tmp/favicon.ico').convert('RGB').save('image/logo.png')"`。SPA 站点通常至少配了 favicon。
    - 如官网CDN不可达，使用 `-H "User-Agent: Mozilla/5.0 ..."` 重试
    - 不编造、不使用侵权图片
@@ -468,3 +475,5 @@ tr:nth-child(even) td { background: #F1F5F9; }
     table th { background: var(--brand-dark); }
     .tag { background: var(--brand-light); color: var(--brand-dark); }
     ```
+
+23. **Tag的nth-child计数陷阱**：当 meta 行同时包含地区、分隔符和标签时，`.tag:nth-child(n)` 的计数包含了`.region`和`.sep`等非tag元素，导致标签编号错位。例如 `.meta` 中有 `<span class="region">` → `<span class="sep">` → `<span class="tag">`（实际第1个标签是第3个child），此时 `.tag:nth-child(n+4)` 会跳过第1个标签。修复方案：要么对所有 `.tag` 应用统一样式（不依赖nth-child做差异化），要么使用 `nth-of-type` 代替 `nth-child`（但 `nth-of-type` 按标签名计数，span元素无法区分不同class）。最稳妥的做法是统一标签样式，不通过nth-child做颜色区分。
